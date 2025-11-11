@@ -1,0 +1,110 @@
+<div class="web-name" routerLink="/home">
+  <div class="wakuwaku">わくわくていこく</div>
+  <div class="wakuwaku-2">WakuWaku Teikoku</div>
+</div>
+
+<div class="profil" routerLink="/managePage"></div>
+
+<div class="create-event">
+  <form [formGroup]="form" (ngSubmit)="createEvent()">
+    <div class="add-photo" (click)="fileInput.click()">
+      <div class="photo-icon"></div>
+      <input type="file" #fileInput (change)="onFileSelected($event)" style="display: none;">
+    </div>
+    <img *ngIf="selectedImageBase64" [src]="selectedImageBase64" class="preview-image">
+
+    <div class="event-data">
+      <div class="event-name">
+        <label for="event-name">Nom de l’événement</label>
+        <div class="rectangle-2">
+          <input id="event-name" class="event-name" type="text" formControlName="eventName" />
+        </div>
+      </div>
+      <div class="description">
+        <label for="description">Description</label>
+        <div class="rectangle-4">
+          <textarea class="description" formControlName="eventDescription"></textarea>
+        </div>
+      </div>
+      <div class="location">
+        <label for="location">Location</label>
+        <div class="rectangle-2">
+          <input id="location" class="location" type="text" formControlName="eventLocation" />
+        </div>
+      </div>
+      <div class="date">
+        <label for="date">Date & Heure</label>
+
+        <mat-form-field>
+          <input matInput [min]="minDate" [matDatepicker]="picker" formControlName="date" placeholder="dd/MM/yyyy" [value]="eventId ? startDate : null">
+          <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+          <mat-datepicker #picker></mat-datepicker>
+        </mat-form-field>
+
+        <div class="rectangle-3">
+          <input id="heure" class="heure" type="text" formControlName="heure" placeholder="hh:mm">
+        </div>
+      </div>
+
+      <div class="place">
+        <label for="place-disponible">Place disponible</label>
+        <div class="rectangle-2">
+          <input id="place-disponible" class="place-disponible" formControlName="maxCapacity">
+        </div>
+      </div>
+    </div>
+
+    <div class="categories">
+      <div class="create-category" (click)="toggleCreateCategoryForm()">
+        <div class="creer">Créer</div>
+        <div class="create-icon"></div>
+      </div>
+      <div class="list-category" (click)="toggleCategoryMenu()">
+        <div class="categories-name">Catégories</div>
+        <div class="list-icon"></div>
+      </div>
+    </div>
+
+    <form [formGroup]="formCategory" (ngSubmit)="createCategory()">
+      <div *ngIf="showCreateCategoryForm" class="creating-category">
+        <label for="creating-category-name">Nom de la catégorie</label>
+        <div class="creating-category-rectangle">
+          <input id="creating-category-name" class="creating-category-name" type="text"
+            formControlName="categoryName" />
+        </div>
+        <div class="creating-category-add-photo" (click)="toggleCategoryImageSelector()">
+          <div class="creating-category-photo-icon"></div>
+          <img *ngIf="selectedCategoryImage" [src]="selectedCategoryImage" alt="Selected Category Image">
+        </div>
+        <button class="creating-category-button" type="submit">Ok</button>
+        <div *ngIf="categoryErrorMessage" class="category-errors-message">{{ categoryErrorMessage }}</div>
+      </div>
+    </form>
+
+    <div *ngIf="showCategoryMenu" class="category-menu" [ngClass]="{ 'active': showCategoryMenu }">
+      <div class="category-item" *ngFor="let category of categories">
+        <input type="radio" id="{{ category.id }}" [value]="category.categoryName"
+          [checked]="selectedCategory === category.categoryName" formControlName="categoryName">
+        <label for="{{ category.id }}">{{ category.categoryName }}</label>
+      </div>
+    </div>
+
+    <div *ngIf="errorMessage" class="errors-message">{{ errorMessage }}</div>
+
+    <div class="create-event-btn">
+      <button *ngIf="!eventId" class="share-event" type="submit">Partager mon événement</button>
+      <button *ngIf="eventId" class="share-event" (click)="buttonUpdateEvent()">Mise à jour de l'événement</button>
+    </div>
+  </form>
+</div>
+
+<div *ngIf="showCategoryImageSelector" class="category-image-selector">
+  <div class="category-image-selector-content">
+    <span class="close" (click)="toggleCategoryImageSelector()">&times;</span>
+    <div class="selector-image-grid">
+      <div *ngFor="let image of categoryImages" class="selector-image-item">
+        <img [src]="image" (click)="selectCategoryImage(image)" alt="Category Image">
+      </div>
+    </div>
+  </div>
+</div>

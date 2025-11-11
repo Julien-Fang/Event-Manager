@@ -1,0 +1,118 @@
+<div class="web-name" routerLink="/mainPage">
+  <div class="wakuwaku">わくわくていこく</div>
+  <div class="wakuwaku-2">WakuWaku Teikoku</div>
+</div>
+
+<div class="profil" routerLink="/managePage"></div>
+
+<div class="create-event" routerLink="/createEvent">
+  <div class="create-text">Créer</div>
+  <div class="create-button"></div>
+</div>
+
+<div class="search" routerLink="/mainPage">
+  <div class="search-icon"></div>
+  <div class="filter-icon"></div>
+</div>
+
+<div class="event">
+  <div class="category">
+    <div class="category-name"> {{ event.categoryName }}</div>
+  </div>
+  <div class="event-data">
+    <div class="event-title"> {{ event.eventName }}</div>
+    <div class="event-description">{{ event.eventDescription }}</div>
+  </div>
+  <img class="event-image" *ngIf="event.image" [src]="'data:image/jpeg;base64,' + event.image" alt="Event Image">
+
+  <div class="event-box">
+    <div class="event-info">
+      <div class="data-form">
+        <div class="location-icon"></div>
+        <div class="data-text">{{ event.eventLocation }}</div>
+      </div>
+      <div class="data-form">
+        <div class="inscription-icon"></div>
+        <div class="data-text">{{listRegistered.length}} inscriptions / {{event.maxCapacity}}</div>
+      </div>
+      <div class="data-form">
+        <div class="date-icon"></div>
+        <div class="data-text"> {{formatDate(event.eventDate)}}</div>
+      </div>
+      <div class="data-form">
+        <div class="creator-icon"></div>
+        <div class="data-text">{{ creatorName }}</div>
+      </div>
+      <div class="data-form">
+        <div class="createOn-icon"></div>
+        <div class="data-text">Créé le {{formatDate(event.createdOn)}}</div>
+      </div>
+    </div>
+  </div>
+
+  <div>
+    <div *ngIf="full===true && feedbackBool === false" class="button-full"> COMPLET </div>
+  </div>
+
+  <div class="button" *ngIf="creator===false && feedbackBool===false">
+    <div class="register-user" *ngIf="registered===false && full===false" (click)="registration()">Réserver</div>
+    <div class="register-user" *ngIf="registered===true" (click)="unregistration()">Désinscrire</div>
+  </div>
+  <div *ngIf="creator===true && feedbackBool===false">
+    <div class="edit" (click)="redirectToCreatePage()">Modifier</div>
+    <div class="delete" (click)="confirmDelete()">Supprimer</div>
+  </div>
+
+  <div class="confirmDelete" *ngIf="deleteConfirmation===true">
+    <div class="confirmDelete-text">Voulez-vous vraiment supprimer cet événement ?</div>
+    <div class="confirmDelete-button-oui" (click)="deleteEvent()">Oui</div>
+    <div class="confirmDelete-button-non" (click)="cancelDelete()">Non</div>
+  </div>
+
+  <div class="feedback-container">
+    <div class="feedback-form" *ngIf="feedbackBool === true && alreadyFeedback === false && registered">
+      <form [formGroup]="formFeedback" (ngSubmit)="createFeedback()">
+        <textarea class="comment-feedback" id="create-feedback" formControlName="comment"
+          placeholder="Laisser un commentaire"></textarea>
+        <div id="create-rating" class="rating">
+          <input type="radio" name="rate" id="star1" formControlName="rate" [value]="5">
+          <label for="star1">&#9733;</label>
+
+          <input type="radio" name="rate" id="star2" formControlName="rate" [value]="4">
+          <label for="star2">&#9733;</label>
+
+          <input type="radio" name="rate" id="star3" formControlName="rate" [value]="3">
+          <label for="star3">&#9733;</label>
+
+          <input type="radio" name="rate" id="star4" formControlName="rate" [value]="2">
+          <label for="star4">&#9733;</label>
+
+          <input type="radio" name="rate" id="star5" formControlName="rate" [value]="1">
+          <label for="star5">&#9733;</label>
+        </div>
+
+        <button class="submit-feedback" type="submit">Envoyer</button>
+      </form>
+    </div>
+    <div *ngIf="errorMessage" class="errors-message">{{ errorMessage }}</div>
+    <div class="feedback-list" *ngIf="feedbackBool===true">
+      <div *ngFor="let feedback of feedbacks" class="feedback">
+        <div class="feedback-user">{{ feedback.userPseudo }}</div>
+        <div class="feedback-text">{{ feedback.comment }}</div>
+
+        <div class="feedback-rate">
+          <div class="rating">
+            <span [class]="getStarClass(feedback.rate, 5)">&#9733;</span>
+            <span [class]="getStarClass(feedback.rate, 4)">&#9733;</span>
+            <span [class]="getStarClass(feedback.rate, 3)">&#9733;</span>
+            <span [class]="getStarClass(feedback.rate, 2)">&#9733;</span>
+            <span [class]="getStarClass(feedback.rate, 1)">&#9733;</span>
+          </div>
+          <div *ngIf="canDelete(feedback.eventUserId)===true && feedback.eventUserId===user.id">
+            <div class="delete-feedback" (click)="deleteFeedback(feedback.id)">Supprimer</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
